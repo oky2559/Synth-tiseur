@@ -1,0 +1,21 @@
+# devenv
+.devenv/
+devenv.lock
+.direnv
+
+# Build
+build/
+*.exe
+*.dll
+*.a
+*.so
+
+# IDE
+.vscode/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db

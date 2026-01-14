@@ -3,3 +3,9 @@ executable('base_project_app',
   dependencies: [libbase_project_dep],
   install: true
 )
+
+executable('synthesizer_example',
+  sources: ['example.c'],
+  dependencies: [libbase_project_dep],
+  install: true
+)
