@@ -1,5 +1,5 @@
 project(
-  'isen-base-project',
+  'mon_synthetiseur',
   'c',
   meson_version : '>= 1.3.0',
   version : '0.1',

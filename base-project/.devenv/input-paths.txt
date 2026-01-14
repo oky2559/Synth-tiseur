@@ -1,0 +1,7 @@
+/work/.devenv/flake.json
+/work/.devenv.flake.nix
+/work/.env
+/work/devenv.local.nix
+/work/devenv.lock
+/work/devenv.nix
+/work/devenv.yaml
