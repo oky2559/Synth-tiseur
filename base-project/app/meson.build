@@ -9,3 +9,8 @@ executable('synthesizer_example',
   dependencies: [libbase_project_dep],
   install: true
 )
+executable('melody',
+  sources: ['melody.c'],
+  dependencies: [libbase_project_dep],
+  install: true
+)
