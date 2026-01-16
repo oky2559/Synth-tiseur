@@ -110,3 +110,9 @@ meson setup build
 meson compile -C build
 meson test -C build
 ```
+
+## Lancer la création des sons
+
+```
+echo "=== Synthétiseur Example ===" && ./build/app/synthesizer_example ; echo "" ; echo "=== Melody ===" && ./build/app/melody ; echo "" ; echo "=== Base Project App ===" && ./build/app/base_project_app ; echo "" ; echo "=== Fichiers WAV générés ===" ; ls -lh *.wav
+```
