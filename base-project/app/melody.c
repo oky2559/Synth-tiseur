@@ -3,58 +3,86 @@
 #include "../include/synthesizer.h"
 
 int main(void) {
-    // Initialiser le synthesizer avec 1 voix
+
+    float frequency;
+    float duration;
+    float amplitude;
+    int wave_choice;
+    WaveformType wave;
+
+    /* ====== SAISIE UTILISATEUR ====== */
+    printf("Frequence (Hz) : ");
+    scanf("%f", &frequency);
+
+    printf("Duree (secondes) : ");
+    scanf("%f", &duration);
+
+    printf("Amplitude (0.0 a 1.0) : ");
+    scanf("%f", &amplitude);
+
+    printf("Type d'onde :\n");
+    printf("  1 - Sinus\n");
+    printf("  2 - Carre\n");
+    printf("  3 - Triangle\n");
+    printf("  4 - Dent de scie\n");
+    printf("Choix : ");
+    scanf("%d", &wave_choice);
+
+    switch (wave_choice) {
+        case 1: wave = WAVE_SINE;     break;
+        case 2: wave = WAVE_SQUARE;   break;
+        case 3: wave = WAVE_TRIANGLE; break;
+        case 4: wave = WAVE_SAWTOOTH;      break;
+        default:
+            printf("Choix invalide, sinus par defaut\n");
+            wave = WAVE_SINE;
+    }
+
+    /* ====== INITIALISATION SYNTH ====== */
     Synthesizer *synth = synth_new(1, SAMPLE_RATE);
     if (!synth) {
-        fprintf(stderr, "Erreur: impossible de créer le synthesizer\n");
+        fprintf(stderr, "Erreur: impossible de creer le synthesizer\n");
         return 1;
     }
 
-    synth_vol(synth, 0.6f);
-    
-    int total_samples = SAMPLE_RATE * 10;
+    synth_vol(synth, 1.0f);
+
+    int total_samples = (int)(duration * SAMPLE_RATE);
     AudioBuffer *buf = buf_new(total_samples, SAMPLE_RATE, CHANNELS);
     if (!buf) {
         synth_free(synth);
         return 1;
     }
 
-    float temp[SAMPLE_RATE];
-    int idx = 0;
-
-    // Notes de la mélodie "Twinkle Twinkle Little Star"
-    float notes[] = {261.63f, 261.63f, 392.00f, 392.00f, 440.00f, 440.00f, 392.00f, 349.23f, 329.63f, 293.66f, 261.63f};
-    float durations[] = {0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 0.5f, 1.0f, 0.5f, 0.5f, 0.5f, 1.0f};
-    int num_notes = sizeof(notes) / sizeof(notes[0]);
-
-    printf("Génération de la mélodie 'Twinkle Twinkle Little Star'...\n");
-
-    // Jouer chaque note
-    for (int i = 0; i < num_notes && idx < total_samples; i++) {
-        int samp = (int)(durations[i] * SAMPLE_RATE);
-        synth_on(synth, 0, notes[i], WAVE_SINE, 0.4f);
-        synth_fill(synth, temp, samp);
-        for (int j = 0; j < samp && idx < total_samples; j++) {
-            buf->samples[idx++] = to_sample(temp[j]);
-        }
-        synth_off(synth, 0);
-
-        // Petite pause entre les notes
-        int pause = (int)(0.1f * SAMPLE_RATE);
-        for (int j = 0; j < pause && idx < total_samples; j++) {
-            buf->samples[idx++] = 0;
-        }
+    float *temp = malloc(sizeof(float) * total_samples);
+    if (!temp) {
+        fprintf(stderr, "Erreur allocation buffer temporaire\n");
+        buf_free(buf);
+        synth_free(synth);
+        return 1;
     }
 
-    buf->length = idx;
+    printf("Generation du son...\n");
 
-    // Sauvegarder le fichier
-    if (wav_save("melody_output.wav", buf)) {
-        printf("✓ Fichier créé: melody_output.wav\n");
+    /* ====== GENERATION ====== */
+    synth_on(synth, 0, frequency, wave, amplitude);
+    synth_fill(synth, temp, total_samples);
+
+    for (int i = 0; i < total_samples; i++) {
+        buf->samples[i] = to_sample(temp[i]);
+    }
+
+    synth_off(synth, 0);
+    buf->length = total_samples;
+
+    /* ====== SAUVEGARDE WAV ====== */
+    if (wav_save("sound_output.wav", buf)) {
+        printf("✓ Fichier cree : sound_output.wav\n");
     } else {
         fprintf(stderr, "Erreur: impossible de sauvegarder le fichier\n");
     }
 
+    free(temp);
     buf_free(buf);
     synth_free(synth);
 
