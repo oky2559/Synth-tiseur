@@ -7,6 +7,7 @@ int main(void) {
     float frequency;
     float duration;
     float amplitude;
+    float volume;
     int wave_choice;
     WaveformType wave;
 
@@ -20,6 +21,9 @@ int main(void) {
     printf("Amplitude (0.0 a 1.0) : ");
     scanf("%f", &amplitude);
 
+    printf("Volume global (0.0 a 1.0) : ");
+    scanf("%f", &volume);
+
     printf("Type d'onde :\n");
     printf("  1 - Sinus\n");
     printf("  2 - Carre\n");
@@ -32,7 +36,7 @@ int main(void) {
         case 1: wave = WAVE_SINE;     break;
         case 2: wave = WAVE_SQUARE;   break;
         case 3: wave = WAVE_TRIANGLE; break;
-        case 4: wave = WAVE_SAWTOOTH;      break;
+        case 4: wave = WAVE_SAWTOOTH; break;
         default:
             printf("Choix invalide, sinus par defaut\n");
             wave = WAVE_SINE;
@@ -45,7 +49,7 @@ int main(void) {
         return 1;
     }
 
-    synth_vol(synth, 1.0f);
+    synth_vol(synth, volume);
 
     int total_samples = (int)(duration * SAMPLE_RATE);
     AudioBuffer *buf = buf_new(total_samples, SAMPLE_RATE, CHANNELS);
@@ -67,12 +71,25 @@ int main(void) {
     /* ====== GENERATION ====== */
     synth_on(synth, 0, frequency, wave, amplitude);
     synth_fill(synth, temp, total_samples);
+    synth_off(synth, 0);
+
+    /* ====== ENVELOPPE SIMPLE ====== */
+    int attack = total_samples / 10;   // 10 %
+    int release = total_samples / 10;  // 10 %
 
     for (int i = 0; i < total_samples; i++) {
-        buf->samples[i] = to_sample(temp[i]);
+        float env;
+
+        if (i < attack)
+            env = (float)i / attack;
+        else if (i > total_samples - release)
+            env = (float)(total_samples - i) / release;
+        else
+            env = 1.0f;
+
+        buf->samples[i] = to_sample(temp[i] * env);
     }
 
-    synth_off(synth, 0);
     buf->length = total_samples;
 
     /* ====== SAUVEGARDE WAV ====== */
