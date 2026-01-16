@@ -4,6 +4,7 @@ libbase_project = static_library('baseproject',
     'synthesizer.c'
   ],
   include_directories: inc,
+  dependencies: [cc.find_library('m', required: false)],
   install: true
 )
 

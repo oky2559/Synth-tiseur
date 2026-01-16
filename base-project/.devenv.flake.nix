@@ -15,7 +15,7 @@
   container_name = null;
   active_profiles = [
   ];
-  hostname = "c0c0844bd189";
+  hostname = "ee6b9605bc37";
   username = "root";
   git_root = null;
   secretspec = null;
@@ -52,7 +52,7 @@
   container_name = null;
   active_profiles = [
   ];
-  hostname = "c0c0844bd189";
+  hostname = "ee6b9605bc37";
   username = "root";
   git_root = null;
   secretspec = null;
