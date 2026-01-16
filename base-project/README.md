@@ -116,3 +116,16 @@ meson test -C build
 ```
 echo "=== Synthétiseur Example ===" && ./build/app/synthesizer_example ; echo "" ; echo "=== Melody ===" && ./build/app/melody ; echo "" ; echo "=== Base Project App ===" && ./build/app/base_project_app ; echo "" ; echo "=== Fichiers WAV générés ===" ; ls -lh *.wav
 ```
+
+
+
+
+# Entrer dans l'environnement Docker interactif
+.\docker-dev.ps1 shell
+
+# Ou en une seule commande (sans interactivité)
+.\docker-dev.ps1 full      # Tout : clean + compile + test + run
+.\docker-dev.ps1 compile   # Juste compiler
+.\docker-dev.ps1 test      # Juste les tests
+.\docker-dev.ps1 run       # Juste exécuter les exemples
+
